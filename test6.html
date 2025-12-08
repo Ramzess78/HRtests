@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR tests</title>
+</head>
+<body class="bg-light">
+    <div class="container py-5" id="main">
+        <h3 class="mb-4">Тест «Мотивация успеха и мотивация боязни неудачи» (А. Реан)</h3>
+        <p class="mb-4">
+            В каждом вопросе выберите <strong>«да»</strong> или <strong>«нет»</strong>. Отвечайте быстро, не обдумывая слишком долго.
+        </p>
+        <div class="my-4">
+            <a href="old.html" class="btn btn-danger">Назад</a>
+        </div>
+
+        <form id="testForm">
+            <div id="questions"></div>
+
+            <button type="button" class="btn btn-primary mt-4"
+                    onclick="calculateResult()">Показать результат</button>
+        </form>
+    </div>
+</body>
+</html>
+<script src="bootstrap.bundle.min.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+<script>
+/* ============================
+   СПИСОК ВОПРОСОВ (20 шт.)
+============================ */
+const questions = [
+"Включаясь в работу, я, как правило, оптимистично настроен, надеюсь на успех.",
+"Обычно я действую активно.",
+"Я склонен к проявлению инициативы.",
+"При выполнении ответственных заданий я по мере сил стараюсь найти любые причины, чтобы отказаться.",
+"Часто выбираю крайности: либо очень легкие, либо совершенно невыполнимые задания.",
+"При встрече с препятствиями я, как правило, не отступаю, а ищу способы их преодоления.",
+"При чередовании успехов и неудач я склонен к переоценке своих успехов.",
+"Плодотворность деятельности в основном зависит от меня самого, а не от чьего-то контроля.",
+"Когда мне приходится браться за трудное задание, а времени мало, я работаю гораздо хуже, медленнее.",
+"Я обычно настойчив в достижении цели.",
+"Я обычно планирую свое будущее не только на несколько дней, но и на месяц, на год вперед.",
+"Я всегда думаю, прежде чем рисковать.",
+"Я обычно не очень настойчив в достижении цели, особенно если меня никто не контролирует.",
+"Предпочитаю ставить перед собой средние по трудности или слегка завышенные, но достижимые цели.",
+"Если я потерпел неудачу и задание не получается, то я, как правило, сразу теряю к нему интерес.",
+"При чередовании успехов и неудач я склонен к переоценке своих неудач.",
+"Я предпочитаю планировать свое будущее лишь на ближайшее время.",
+"При работе в условиях ограниченного времени результативность моей деятельности обычно улучшается, даже если задание достаточно трудное.",
+"Я, как правило, не отказываюсь от поставленной цели даже в случае неудачи на пути к ее достижению.",
+"Если я сам выбрал себе задание, то в случае неудачи его притягательность для меня еще более возрастает."
+];
+
+/* ============================
+   КЛЮЧ (ответ → балл)
+============================ */
+/* «Да»: 1,2,3,6,8,10,11,12,14,16,18,19,20  */
+/* «Нет»: 4,5,7,9,13,15,17 */
+
+const keyYes  = [1,2,3,6,8,10,11,12,14,16,18,19,20];
+const keyNo   = [4,5,7,9,13,15,17];
+
+/* ============================
+   ГЕНЕРАЦИЯ ВОПРОСОВ
+============================ */
+const wrap = document.getElementById("questions");
+
+questions.forEach((q, i) => {
+    const n = i + 1;
+    const block = document.createElement("div");
+    block.className = "card mb-3 p-3";
+
+    block.innerHTML = `
+        <p><strong>${n}. ${q}</strong></p>
+
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="q${n}" id="q${n}_yes" value="да">
+            <label class="form-check-label" for="q${n}_yes">Да</label>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="q${n}" id="q${n}_no" value="нет">
+            <label class="form-check-label" for="q${n}_no">Нет</label>
+        </div>
+    `;
+    wrap.appendChild(block);
+});
+
+/* ============================
+   ПОДСЧЁТ РЕЗУЛЬТАТА
+============================ */
+function calculateResult() {
+    let score = 0;
+
+    for (let i = 1; i <= 20; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (!selected) {
+            alert("Ответьте на все вопросы!");
+            return;
+        }
+
+        const answer = selected.value;
+
+        if (answer === "да"  && keyYes.includes(i)) score++;
+        if (answer === "нет" && keyNo.includes(i))  score++;
+    }
+
+    // интерпретация результата
+    let resultText = "";
+    if (score >= 1 && score <= 7) {
+        resultText = "У вас выражена мотивация боязни неудачи.";
+    } else if (score >= 14 && score <= 20) {
+        resultText = "У вас выражена мотивация успеха.";
+    } else if (score >= 8 && score <= 13) {
+        resultText = "Мотивационный полюс выражен умеренно.";
+    }
+
+    // скрываем всё и показываем результат
+    document.body.innerHTML = `
+        <div class="container py-5">
+            <div class="card p-4">
+                <h3 class="mb-3">Ваш результат</h3>
+                <p><strong>Баллы:</strong> ${score}</p>
+                <p><strong>Интерпретация:</strong> ${resultText}</p>
+            </div>
+        </div>
+    `;
+}
+</script>

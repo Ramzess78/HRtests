@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR tests</title>
+</head>
+
+<body class="bg-light">
+<div class="container py-5" id="main">
+
+    <h2 class="mb-4">Опросник организационной лояльности Лимана–Портера</h2>
+
+    <p class="mb-4">
+        Ниже представлена серия утверждений. Оцените степень согласия по шкале от 1 до 7:
+        <br>1 – абсолютно не согласен … 7 – абсолютно согласен
+    </p>
+    <div class="my-4">
+        <a href="old.html" class="btn btn-danger">Назад</a>
+    </div>
+
+    <form id="testForm" class="mb-5">
+
+        <div id="questions"></div>
+
+        <button type="submit" class="btn btn-primary mt-4">Получить результат</button>
+    </form>
+
+</div>
+
+<div class="container py-5 d-none" id="resultBlock">
+    <h2 class="mb-4">Ваш результат</h2>
+    <div id="resultText" class="fs-5"></div>
+</div>
+
+<script src="bootstrap.bundle.min.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+
+<script>
+// ---------- DATA ----------
+const questions = [
+    "1. Я готов работать сверхурочно на благо организации",
+    "2. Я рассказываю моим друзьям о том, как хорошо работать в организации",
+    "3. Я не сильно предан организации",
+    "4. Я согласен почти на любую работу для того, чтобы остаться в организации",
+    "5. Я нахожу, что мои ценности и ценности организации очень схожи",
+    "6. Я горжусь тем, что могу сказать: «Я – часть организации»",
+    "7. Аналогичную работу я могу выполнять в другой организации не хуже, чем в этой",
+    "8. Ради организации я готов повышать производительность своего труда",
+    "9. Даже незначительного уменьшения моей зарплаты было бы достаточно для ухода из организации",
+    "10. Я рад, что выбрал именно эту организацию из тех, которые рассматривал при устройстве на работу",
+    "11. Преданность организации вряд ли сулит много выгод",
+    "12. Часто мне трудно согласиться с политикой организации в отношении ее сотрудников",
+    "13. Я действительно забочусь о судьбе организации",
+    "14. Для меня это лучшая из всех организаций, в которых я работал",
+    "15. Решение о работе в организации было ошибкой с моей стороны"
+];
+
+// прямые (1–7), обратные (7–1)
+const reverseItems = [3, 7, 9, 11, 12, 15];
+
+// ---------- RENDER QUESTIONS ----------
+let html = "";
+questions.forEach((q, i) => {
+    const num = i + 1;
+    html += `
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="fw-semibold">${q}</p>
+                <div class="d-flex gap-2 flex-wrap">
+                    ${[1,2,3,4,5,6,7].map(v => `
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio"
+                                   name="q${num}" value="${v}" required>
+                            <label class="form-check-label">${v}</label>
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+        </div>
+    `;
+});
+document.getElementById("questions").innerHTML = html;
+
+
+// ---------- PROCESS TEST ----------
+document.getElementById("testForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let sum = 0;
+
+    for (let i=1; i<=15; i++){
+        const val = parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+
+        // reverse scoring
+        if (reverseItems.includes(i)) {
+            sum += (8 - val); // 7 ->1, 1->7
+        } else {
+            sum += val;
+        }
+    }
+
+    const avg = (sum / 15).toFixed(2);
+
+    // interpretation
+    let interp = "";
+    if (avg < 4) interp = "Низкий уровень организационной лояльности.";
+    else if (avg < 4.4) interp = "Лояльность несколько ниже среднего по российским компаниям.";
+    else if (avg < 5) interp = "Средний уровень лояльности, характерный для большинства российских компаний.";
+    else interp = "Высокая организационная лояльность.";
+
+    // hide main
+    document.getElementById("main").classList.add("d-none");
+
+    // show result
+    const resultBlock = document.getElementById("resultBlock");
+    resultBlock.classList.remove("d-none");
+
+    document.getElementById("resultText").innerHTML = `
+        <p><b>Средний балл: ${avg}</b></p>
+        <p>${interp}</p>
+    `;
+});
+</script>
+
+</body>
+</html>
