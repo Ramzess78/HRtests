@@ -20,8 +20,7 @@
     </div>
 
     <div class="container py-5 d-none" id="resultBlock">
-        <h2 class="mb-4">Результат: ваш тип мотивации</h2>
-        <div id="resultText" class="fs-4"></div>
+        <h2 class="mb-4">Ваш результат отправлен</h2>
     </div>
 </body>
 </html>
@@ -127,12 +126,6 @@ document.getElementById("submitBtn").onclick = (e) => {
     const res = document.getElementById("resultBlock");
     res.classList.remove("d-none");
 
-    let out = "";
-    for (let t of types)
-        out += `<div><strong>${t}:</strong> ${scores[t]}</div>`;
-
-    document.getElementById("resultText").innerHTML = out;
-
     const userData = JSON.parse(sessionStorage.getItem("userData"));
     if (!userData) {
         alert("Сначала заполните форму");
@@ -150,5 +143,4 @@ document.getElementById("submitBtn").onclick = (e) => {
         test: testData
     }));
 };
-
 </script>

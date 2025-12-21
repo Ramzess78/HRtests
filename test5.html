@@ -9,7 +9,7 @@
 <body class="bg-light">
 
 <div class="container py-5" id="main">
-  <h1 class="mb-3">Диагностика стилей руководства (А.Л. Журавлёв)</h1>
+  <h1 class="mb-3" id="test_name">Диагностика стилей руководства (А.Л. Журавлёв)</h1>
   <p>Инструкция: Для каждого из 27 пунктов выберите <b>один или несколько</b> вариантов (чекбоксы), которые соответствуют поведению руководителя.</p>
 
     <div class="my-4">
@@ -33,21 +33,15 @@
   <h2>Результат</h2>
   <div id="resultSummary" class="mb-3"></div>
   <div id="resultInterpretation" class="mb-3"></div>
-  <button id="retakeBtn" class="btn btn-outline-primary">Пройти ещё раз</button>
 </div>
 
 <script src="bootstrap.bundle.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 
 <script>
-/*
-  Вопросы (полные формулировки) — взяты из PDF.
-  Ключ — транскрибирован из таблицы в PDF: для каждого вопроса (1..27) и варианта (a..e)
-  указаны баллы для стилей: D (Директивный), K (Коллегиальный), P (Попустительский).
-  Если в таблице один вариант давал несколько стилей / баллов — все они применяются.
-*/
-
-// Массив вопросов (полные формулировки)
+  let test_name = document.getElementById("test_name").textContent;
+  let tg = window.Telegram.WebApp;
+  tg.ready();
 const questions = [
 `1. Распределение полномочий между руководителями и подчиненными:
 а) централизует руководство, требует, чтобы обо всех деталях докладывали именно ему;
@@ -362,6 +356,22 @@ document.getElementById('testForm').addEventListener('submit', function(e){
   `;
 
   document.getElementById('resultInterpretation').innerHTML = interpret(res.scaled);
+  const userData = JSON.parse(sessionStorage.getItem("userData"));
+    if (!userData) {
+        alert("Сначала заполните форму");
+        window.location.href = "who.html";
+        return;
+    }
+
+    const testData = {
+        test_name: test_name,
+        scores: [res.scaled.D, res.scaled.K, res.scaled.P]
+    };
+
+    tg.sendData(JSON.stringify({
+        user: userData,
+        test: testData
+    }));
 });
 
 // сброс формы
@@ -369,12 +379,6 @@ document.getElementById('resetBtn').addEventListener('click', function(){
   document.getElementById('testForm').reset();
 });
 
-// снова пройти
-document.getElementById('retakeBtn').addEventListener('click', function(){
-  document.getElementById('resultBlock').classList.add('d-none');
-  document.getElementById('main').classList.remove('d-none');
-  window.scrollTo({top:0, behavior:'smooth'});
-});
 
 </script>
 

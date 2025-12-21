@@ -8,7 +8,7 @@
 </head>
 <body class="bg-light">
     <div class="container py-5" id="main">
-        <h3 class="mb-4">Методика диагностики мотивации избегания неудач (Т. Элерс)</h3>
+        <h3 class="mb-4" id="test_name">Методика диагностики мотивации избегания неудач (Т. Элерс)</h3>
         <p class="mb-4">В каждой строке выберите одно слово, которое наиболее точно Вас характеризует.</p>
         <div class="my-4">
             <a href="new.html" class="btn btn-danger">Назад</a>
@@ -27,9 +27,9 @@
 <script src="bootstrap.bundle.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 <script>
-/* ----------------------------
-   Полный список вопросов
------------------------------*/
+  let test_name = document.getElementById("test_name").textContent;
+  let tg = window.Telegram.WebApp;
+  tg.ready();
 const questions = [
   ["Смелый", "бдительный", "предприимчивый"],
   ["Кроткий", "робкий", "упрямый"],
@@ -95,7 +95,6 @@ questions.forEach((row, i) => {
   wrap.appendChild(block);
 });
 
-/* --------- CALCULATE RESULT --------- */
 function calculateResult() {
   let score = 0;
 
@@ -121,11 +120,25 @@ function calculateResult() {
   document.body.innerHTML = `
     <div class="container py-5">
       <div class="card p-4">
-        <h3 class="mb-3">Ваш результат</h3>
-        <p><strong>Сумма баллов:</strong> ${score}</p>
-        <p><strong>Интерпретация:</strong> ${text}</p>
+        <h3 class="mb-3">Ваш результат отправлен</h3>
       </div>
     </div>
   `;
+  const userData = JSON.parse(sessionStorage.getItem("userData"));
+    if (!userData) {
+        alert("Сначала заполните форму");
+        window.location.href = "who.html";
+        return;
+    }
+
+    const testData = {
+        test_name: test_name,
+        scores: [text, score]
+    };
+
+    tg.sendData(JSON.stringify({
+        user: userData,
+        test: testData
+    }));
 }
 </script>

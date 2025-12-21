@@ -8,7 +8,7 @@
 </head>
 <body class="bg-light">
     <div class="container py-5" id="main">
-        <h3 class="mb-4">Тест «Мотивация успеха и мотивация боязни неудачи» (А. Реан)</h3>
+        <h3 class="mb-4" id="test_name">Тест «Мотивация успеха и мотивация боязни неудачи» (А. Реан)</h3>
         <p class="mb-4">
             В каждом вопросе выберите <strong>«да»</strong> или <strong>«нет»</strong>. Отвечайте быстро, не обдумывая слишком долго.
         </p>
@@ -20,7 +20,7 @@
             <div id="questions"></div>
 
             <button type="button" class="btn btn-primary mt-4"
-                    onclick="calculateResult()">Показать результат</button>
+                    onclick="calculateResult()">Отправить</button>
         </form>
     </div>
 </body>
@@ -28,9 +28,7 @@
 <script src="bootstrap.bundle.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 <script>
-/* ============================
-   СПИСОК ВОПРОСОВ (20 шт.)
-============================ */
+
 const questions = [
 "Включаясь в работу, я, как правило, оптимистично настроен, надеюсь на успех.",
 "Обычно я действую активно.",
@@ -54,18 +52,11 @@ const questions = [
 "Если я сам выбрал себе задание, то в случае неудачи его притягательность для меня еще более возрастает."
 ];
 
-/* ============================
-   КЛЮЧ (ответ → балл)
-============================ */
-/* «Да»: 1,2,3,6,8,10,11,12,14,16,18,19,20  */
-/* «Нет»: 4,5,7,9,13,15,17 */
+
 
 const keyYes  = [1,2,3,6,8,10,11,12,14,16,18,19,20];
 const keyNo   = [4,5,7,9,13,15,17];
 
-/* ============================
-   ГЕНЕРАЦИЯ ВОПРОСОВ
-============================ */
 const wrap = document.getElementById("questions");
 
 questions.forEach((q, i) => {
@@ -89,9 +80,7 @@ questions.forEach((q, i) => {
     wrap.appendChild(block);
 });
 
-/* ============================
-   ПОДСЧЁТ РЕЗУЛЬТАТА
-============================ */
+
 function calculateResult() {
     let score = 0;
 
@@ -122,11 +111,25 @@ function calculateResult() {
     document.body.innerHTML = `
         <div class="container py-5">
             <div class="card p-4">
-                <h3 class="mb-3">Ваш результат</h3>
-                <p><strong>Баллы:</strong> ${score}</p>
-                <p><strong>Интерпретация:</strong> ${resultText}</p>
+                <h3 class="mb-3">Ваш результат отправлен</h3>
             </div>
         </div>
     `;
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    if (!userData) {
+        alert("Сначала заполните форму");
+        window.location.href = "who.html";
+        return;
+    }
+
+    const testData = {
+        test_name: test_name,
+        scores: [resultText, score]
+    };
+
+    tg.sendData(JSON.stringify({
+        user: userData,
+        test: testData
+    }));
 }
 </script>

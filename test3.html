@@ -8,7 +8,7 @@
 </head>
 <body class="bg-light">
     <div class="container py-5" id="main">
-        <h3 class="mb-4">Тест «Мотивация успеха и мотивация боязни неудачи» (А. Реан)</h3>
+        <h3 class="mb-4" id="test_name">Тест «Мотивация успеха и мотивация боязни неудачи» (А. Реан)</h3>
         <p class="mb-4">
             В каждом вопросе выберите <strong>«да»</strong> или <strong>«нет»</strong>. Отвечайте быстро, не обдумывая слишком долго.
         </p>
@@ -28,9 +28,9 @@
 <script src="bootstrap.bundle.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 <script>
-/* ============================
-   СПИСОК ВОПРОСОВ (20 шт.)
-============================ */
+  let test_name = document.getElementById("test_name").textContent;
+  let tg = window.Telegram.WebApp;
+  tg.ready();
 const questions = [
 "Включаясь в работу, я, как правило, оптимистично настроен, надеюсь на успех.",
 "Обычно я действую активно.",
@@ -122,11 +122,25 @@ function calculateResult() {
     document.body.innerHTML = `
         <div class="container py-5">
             <div class="card p-4">
-                <h3 class="mb-3">Ваш результат</h3>
-                <p><strong>Баллы:</strong> ${score}</p>
-                <p><strong>Интерпретация:</strong> ${resultText}</p>
+                <h3 class="mb-3">Ваш результат отправлен</h3>
             </div>
         </div>
     `;
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    if (!userData) {
+        alert("Сначала заполните форму");
+        window.location.href = "who.html";
+        return;
+    }
+
+    const testData = {
+        test_name: test_name,
+        scores: [resultText, score]
+    };
+
+    tg.sendData(JSON.stringify({
+        user: userData,
+        test: testData
+    }));
 }
 </script>
