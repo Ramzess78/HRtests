@@ -28,7 +28,9 @@
 <script src="bootstrap.bundle.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
 <script>
-
+let test_name = document.getElementById("test_name").textContent;
+let tg = window.Telegram.WebApp;
+tg.ready();
 const questions = [
 "Включаясь в работу, я, как правило, оптимистично настроен, надеюсь на успех.",
 "Обычно я действую активно.",
@@ -132,4 +134,5 @@ function calculateResult() {
         test: testData
     }));
 }
+
 </script>
