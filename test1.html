@@ -96,8 +96,10 @@ function render() {
 
 render();
 
-document.getElementById("submitBtn").onclick = () => {
-    let scores = {Инструментальный:0, Профессиональный:0, Патриотический:0, Хозяйский:0, Люмпенизированный:0};
+document.getElementById("submitBtn").onclick = (e) => {
+    e.preventDefault(); // отменяем отправку формы
+
+    const scores = {Инструментальный:0, Профессиональный:0, Патриотический:0, Хозяйский:0, Люмпенизированный:0};
 
     questions.forEach((q, qi) => {
         const selects = [...document.querySelectorAll(`input[name=q${qi}]:checked`)]
@@ -130,22 +132,23 @@ document.getElementById("submitBtn").onclick = () => {
         out += `<div><strong>${t}:</strong> ${scores[t]}</div>`;
 
     document.getElementById("resultText").innerHTML = out;
+
     const userData = JSON.parse(sessionStorage.getItem("userData"));
     if (!userData) {
         alert("Сначала заполните форму");
         window.location.href = "who.html";
+        return;
     }
-    console.log("Пользователь:", userData);
+
     const testData = {
-        test_name:test_name,
-        scores:scores
-    }
-    userData = JSON.parse(sessionStorage.getItem("userData"));
-    testData = JSON.parse(sessionStorage.getItem("testData"));
+        test_name: test_name,
+        scores: scores
+    };
+
     tg.sendData(JSON.stringify({
         user: userData,
         test: testData
-    }))
-    tg.close();
+    }));
 };
+
 </script>
