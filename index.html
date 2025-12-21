@@ -9,26 +9,22 @@
 <body class="bg-light">
     <div class="container py-5" id="main">
         <h1 class="text-center mb-5 fw-bold">
-            Кто вы?
+            Добро пожаловать!
         </h1>
         <div class="row">
-            <a href="new.html" class="text-decoration-none">
+            <a href="who.html" class="text-decoration-none">
                 <div class="border rounded-3 p-4 mb-4 bg-white shadow-sm text-center">
                     <h1 class="fw-bold text-danger" style="font-size: 3rem;">Новый</h1>
                     <h3 class="text-primary fw-semibold">Сотрудник</h3>
                 </div>
             </a>
         </div>
-        <div class="row">
-                <a href="form.html" class="text-decoration-none">
-                    <div class="border rounded-3 p-4 bg-white shadow-sm text-center">
-                        <h1 class="fw-bold text-purple" style="font-size: 3rem; color:#9b4fff;">Старый</h1>
-                        <h3 class="text-primary fw-semibold">Сотрудник</h3>
-                    </div>
-                </a>
-        </div>
     </div>
 <script src="bootstrap.bundle.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+<script>
+    let tg = window.Telegram.WebApp;
+    tg.expand();
+</script>
 </body>
 </html>
