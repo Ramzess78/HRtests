@@ -50,7 +50,10 @@
             email: email
 
         }
-        tg.sendData(JSON.stringify(userData));
+        send.addEventListener("click", ()=> {
+            tg.sendData(JSON.stringify(userData));
+        })
     </script>
 </body>
+
 </html>
