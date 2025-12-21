@@ -36,5 +36,13 @@
     </div>
 <script src="bootstrap.bundle.min.js"></script>
 <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+    <script>
+    const userData = JSON.parse(sessionStorage.getItem("userData"));
+    if (!userData) {
+        alert("Сначала заполните форму");
+        window.location.href = "who.html";
+    }
+</script>
 </body>
+
 </html>
